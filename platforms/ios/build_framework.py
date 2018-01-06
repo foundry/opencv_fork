@@ -101,6 +101,11 @@ class Builder:
             if xcode_ver >= 7 and t[1] == 'iPhoneOS' and self.bitcodedisabled == False:
                 cmake_flags.append("-DCMAKE_C_FLAGS=-fembed-bitcode")
                 cmake_flags.append("-DCMAKE_CXX_FLAGS=-fembed-bitcode")
+            if t[1] == 'iPhoneSimulator':
+                cmake_flags.append("-DWITH_IPP=OFF")
+                # disabling IPP is a workaround for opencv/cmake refusing to download the intel64 ippicv prebuilt library (i386 only is downloaded).
+                # the alternative is to enable IPP then manually download intel64 ipp after failed build and rebuild.
+                # this hack can be removed when opencv/cmake is fixed.
             self.buildOne(t[0], t[1], mainBD, cmake_flags)
 
             if self.dynamic == False:
