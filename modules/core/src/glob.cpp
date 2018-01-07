@@ -47,6 +47,7 @@
 #if defined _WIN32 || defined WINCE
 # include <windows.h>
 const char dir_separators[] = "/\\";
+const char native_separator = '\\';
 
 namespace
 {
@@ -135,6 +136,7 @@ namespace
 # include <dirent.h>
 # include <sys/stat.h>
 const char dir_separators[] = "/";
+const char native_separator = '/';
 #endif
 
 static bool isDir(const cv::String& path, DIR* dir)
@@ -239,9 +241,9 @@ static void glob_rec(const cv::String& directory, const cv::String& wildchart, s
                 const char* name = ent->d_name;
                 if((name[0] == 0) || (name[0] == '.' && name[1] == 0) || (name[0] == '.' && name[1] == '.' && name[2] == 0))
                     continue;
-
-                cv::String path = cv::utils::fs::join(directory, name);
-                cv::String entry = cv::utils::fs::join(pathPrefix, name);
+                
+                cv::String path = directory + native_separator + name;
+                cv::String entry = pathPrefix + native_separator + name;
 
                 if (isDir(path, dir))
                 {
