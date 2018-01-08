@@ -14,5 +14,10 @@
     <string>????</string>
     <key>CFBundlePackageType</key>
     <string>FMWK</string>
+    <key>UIDeviceFamily</key>
+    <array>
+       <integer>1</integer>
+       <integer>2</integer>
+    </array>
 </dict>
 </plist>
