@@ -1,0 +1,39 @@
+From e0aa677388cba6afac06678afcac574867f2cea4 Mon Sep 17 00:00:00 2001
+From: Yang Chao <iyeatse@gmail.com>
+Date: Sun, 8 Jan 2023 02:30:24 +0800
+Subject: [PATCH] Open CV_CPU_NEON_DOTPROD on Apple silicon devices
+
+---
+ modules/core/src/system.cpp | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/modules/core/src/system.cpp b/modules/core/src/system.cpp
+index 9ea23b1f33..6ad2df7f94 100644
+--- a/modules/core/src/system.cpp
++++ b/modules/core/src/system.cpp
+@@ -243,6 +243,7 @@ std::wstring GetTempFileNameWinRT(std::wstring prefix)
+ #if defined __MACH__ && defined __APPLE__
+ #include <mach/mach.h>
+ #include <mach/mach_time.h>
++#include <sys/sysctl.h>
+ #endif
+ 
+ #endif
+@@ -627,6 +628,14 @@ struct HWFeatures
+     #if (defined __ARM_FP  && (((__ARM_FP & 0x2) != 0) && defined __ARM_NEON__))
+         have[CV_CPU_FP16] = true;
+     #endif
++    #if (defined __ARM_FEATURE_DOTPROD)
++        int has_feat_dotprod = 0;
++        size_t has_feat_dotprod_size = sizeof(has_feat_dotprod);
++        sysctlbyname("hw.optional.arm.FEAT_DotProd", &has_feat_dotprod, &has_feat_dotprod_size, NULL, 0);
++        if (has_feat_dotprod) {
++            have[CV_CPU_NEON_DOTPROD] = true;
++        }
++    #endif
+     #elif (defined __clang__)
+     #if (defined __ARM_NEON__ || (defined __ARM_NEON && defined __aarch64__))
+         have[CV_CPU_NEON] = true;
+-- 
+2.39.1
+
